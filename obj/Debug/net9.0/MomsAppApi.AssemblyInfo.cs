@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MomsAppApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+211655b77cb405832cb3896f3987ee95e2083c8c")]
 [assembly: System.Reflection.AssemblyProductAttribute("MomsAppApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MomsAppApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

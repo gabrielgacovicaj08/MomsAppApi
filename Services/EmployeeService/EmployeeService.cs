@@ -213,7 +213,7 @@ namespace MomsAppApi.Services.EmployeeService
         public async Task<bool> DeactivateEmployeeAsync(int employee_id)
         {
             await using var conn = NewConn();
-            await using var cmd = new SqlCommand("dbo.DeactivateEmployee ", conn)
+            await using var cmd = new SqlCommand("dbo.DeleteEmployee ", conn)
             {
                 CommandType = CommandType.StoredProcedure
             };

@@ -42,5 +42,13 @@ namespace MomsAppApi.Controller
             if (response != null) return Ok(response);
             return NotFound(response);
         }
+
+        [HttpPost("delete-structure/{id}")]
+        public async Task<ActionResult<bool>> DeleteStructureAsync(int id)
+        {
+            var response = await structureService.DeleteStructureAsync(id);
+            if (response) return Ok(response);
+            return BadRequest(response);
+        }
     }
 }

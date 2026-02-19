@@ -7,6 +7,7 @@ namespace MomsAppApi.Services.StructureService
         Task<CreateStructureDTO> CreateStructureAsync(CreateStructureDTO request);
         Task<bool> UpdateStructureAsync(int structure_id, UpdateStructureDTO request);
         Task<List<StructureResponseDTO>> GetAllStructuresAsync();
-         Task<StructureResponseDTO?> GetStructureByIdAsync(int structure_id);
+        Task<StructureResponseDTO?> GetStructureByIdAsync(int structure_id);
+        Task<bool> DeleteStructureAsync(int structure_id);
     }
 }

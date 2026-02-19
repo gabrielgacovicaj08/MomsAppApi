@@ -137,5 +137,28 @@ namespace MomsAppApi.Services.StructureService
             }
 
         }
+
+        public async Task<bool> DeleteStructureAsync(int structure_id)
+        {
+            using var conn = NewConn();
+            using var cmd = new SqlCommand("dbo.DeleteStructure", conn)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            try
+            {
+                cmd.Parameters.Add("@structure_id", SqlDbType.Int).Value = structure_id;
+
+                await conn.OpenAsync();
+                cmd.ExecuteNonQuery();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Couldn't delete the structure: ", ex);
+                return false;
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MomsAppApi.Models.AssignmentDTO;
 using MomsAppApi.Services.AssignmentService;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MomsAppApi.Controller
 {
@@ -16,6 +17,25 @@ namespace MomsAppApi.Controller
             if (response == null) return BadRequest(response);
             return Ok(response);
         }
-         
+
+        [HttpPost("assignments-by-day")]
+        public async Task<ActionResult<List<ResponseAssignmentDTO?>>> GetAllAssignmentsByDay(DateOnly date)
+        {
+            var response = await assignmentService.GetAllAssignmentsByDay(date);
+            if (response != null) return response;
+
+            return BadRequest(response);
+        }
+
+        [HttpPost("assignements-by-emp-id")]
+        public async Task<ActionResult<List<ResponseAssignmentDTO?>>> GetAssignementsByEmpId(int employee_id)
+        {
+            var response = await assignmentService.GetAssignementsByEmpId(employee_id);
+            if (response != null) return response;
+
+            return BadRequest(response);
+        }
     }
+
+
 }
