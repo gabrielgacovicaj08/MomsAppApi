@@ -7,5 +7,6 @@
         public string? city { get; set; } = string.Empty;
         public string? zip { get; set; } = string.Empty;
         public string? client_name { get; set; } = string.Empty;
+        public bool is_active { get; set; }
     }
 }

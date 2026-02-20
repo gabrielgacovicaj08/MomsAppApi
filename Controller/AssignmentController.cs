@@ -18,7 +18,7 @@ namespace MomsAppApi.Controller
             return Ok(response);
         }
 
-        [HttpPost("assignments-by-day")]
+        [HttpGet("assignments-by-day/{date}")]
         public async Task<ActionResult<List<ResponseAssignmentDTO?>>> GetAllAssignmentsByDay(DateOnly date)
         {
             var response = await assignmentService.GetAllAssignmentsByDay(date);
@@ -27,7 +27,7 @@ namespace MomsAppApi.Controller
             return BadRequest(response);
         }
 
-        [HttpPost("assignements-by-emp-id")]
+        [HttpGet("assignements-by-emp-id/{employee_id}")]
         public async Task<ActionResult<List<ResponseAssignmentDTO?>>> GetAssignementsByEmpId(int employee_id)
         {
             var response = await assignmentService.GetAssignementsByEmpId(employee_id);

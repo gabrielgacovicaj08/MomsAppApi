@@ -36,12 +36,23 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy => policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IStructureService, StructureService>();
 builder.Services.AddScoped<IAssignmentService, AssignmentService>();
 
 var app = builder.Build();
+
+app.UseCors("AllowFrontend");
 
 
 // Configure the HTTP request pipeline.

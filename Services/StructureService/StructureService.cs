@@ -51,6 +51,7 @@ namespace MomsAppApi.Services.StructureService
                 cmd.Parameters.Add("@city", SqlDbType.NVarChar, 100).Value = request.city;
                 cmd.Parameters.Add("@zip", SqlDbType.NVarChar, 7).Value = request.zip;
                 cmd.Parameters.Add("@client_name", SqlDbType.NVarChar, 150).Value = request.client_name;
+                cmd.Parameters.Add("@is_active", SqlDbType.Bit).Value = request.is_active;
 
                 await conn.OpenAsync();
                 cmd.ExecuteNonQuery();
@@ -84,11 +85,13 @@ namespace MomsAppApi.Services.StructureService
                 {
                     structures.Add(new StructureResponseDTO
                     {
+                        structure_id = Convert.ToInt32(reader["structure_id"]),
                         name = reader["name"].ToString(),
                         address_line = reader["address_line"].ToString(),
                         city = reader["city"].ToString(),
                         zip = reader["zip"].ToString(),
-                        client_name = reader["client_name"].ToString()
+                        client_name = reader["client_name"].ToString(),
+                        is_active = Convert.ToBoolean(reader["is_active"])
                     });
                 }
                 return structures;
@@ -122,7 +125,8 @@ namespace MomsAppApi.Services.StructureService
                         address_line = reader["address_line"].ToString(),
                         city = reader["city"].ToString(),
                         zip = reader["zip"].ToString(),
-                        client_name = reader["client_name"].ToString()
+                        client_name = reader["client_name"].ToString(),
+                        is_active = Convert.ToBoolean(reader["is_active"])
                     };
                 }
                 else

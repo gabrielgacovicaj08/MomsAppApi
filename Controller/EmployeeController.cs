@@ -46,7 +46,7 @@ namespace MomsAppApi.Controller
 
         }
 
-        [HttpPost("employee/{employee_id}/update")]
+        [HttpPost("update-employee/{employee_id}")]
         public async Task<ActionResult<Employee?>> UpdateEmployee(int employee_id, Employee updatedEmployee)
         {
             var employee = await employeeService.UpdateEmployeeAsync(employee_id, updatedEmployee);
@@ -64,7 +64,7 @@ namespace MomsAppApi.Controller
             return Ok(employees);
         }
 
-        [HttpPost("employee/{employee_id}/deactivate")]
+        [HttpGet("employee/{employee_id}/deactivate")]
         public async Task<ActionResult> DeactivateEmployee(int employee_id)
         {
             var success = await employeeService.DeactivateEmployeeAsync(employee_id);

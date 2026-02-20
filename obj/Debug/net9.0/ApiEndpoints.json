@@ -2,15 +2,15 @@
   {
     "ContainingType": "MomsAppApi.Controller.AssignmentController",
     "Method": "GetAssignementsByEmpId",
-    "RelativePath": "api/Assignment/assignements-by-emp-id",
-    "HttpMethod": "POST",
+    "RelativePath": "api/Assignment/assignements-by-emp-id/{employee_id}",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "employee_id",
         "Type": "System.Int32",
-        "IsRequired": false
+        "IsRequired": true
       }
     ],
     "ReturnTypes": [
@@ -28,15 +28,15 @@
   {
     "ContainingType": "MomsAppApi.Controller.AssignmentController",
     "Method": "GetAllAssignmentsByDay",
-    "RelativePath": "api/Assignment/assignments-by-day",
-    "HttpMethod": "POST",
+    "RelativePath": "api/Assignment/assignments-by-day/{date}",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "date",
         "Type": "System.DateOnly",
-        "IsRequired": false
+        "IsRequired": true
       }
     ],
     "ReturnTypes": [
@@ -215,7 +215,7 @@
     "ContainingType": "MomsAppApi.Controller.EmployeeController",
     "Method": "DeactivateEmployee",
     "RelativePath": "api/Employee/employee/{employee_id}/deactivate",
-    "HttpMethod": "POST",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -230,7 +230,7 @@
   {
     "ContainingType": "MomsAppApi.Controller.EmployeeController",
     "Method": "UpdateEmployee",
-    "RelativePath": "api/Employee/employee/{employee_id}/update",
+    "RelativePath": "api/Employee/update-employee/{employee_id}",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -308,7 +308,7 @@
     "ContainingType": "MomsAppApi.Controller.StructureController",
     "Method": "DeleteStructureAsync",
     "RelativePath": "api/Structure/delete-structure/{id}",
-    "HttpMethod": "POST",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
