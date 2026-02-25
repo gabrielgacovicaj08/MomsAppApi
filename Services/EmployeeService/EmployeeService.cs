@@ -236,5 +236,49 @@ namespace MomsAppApi.Services.EmployeeService
             }
 
         }
+
+        public async Task<List<EmployeeResponseDTO>?> GetAvailableWorkersPerDay(DateOnly date)
+        {
+            await using var conn = NewConn();
+            await using var cmd = new SqlCommand("dbo.AvailableWorkersPerDay", conn)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.Add("@work_date", SqlDbType.Date).Value = date;
+
+            var employees = new List<EmployeeResponseDTO>();
+
+            try
+            {
+                await conn.OpenAsync();
+                await using var reader = await cmd.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
+                {
+                    employees.Add(new EmployeeResponseDTO
+                    {
+                        employee_id = reader.GetInt32(reader.GetOrdinal("employee_id")),
+                        first_name = reader.GetString(reader.GetOrdinal("first_name")),
+                        last_name = reader.GetString(reader.GetOrdinal("last_name")),
+                        email = reader.GetString(reader.GetOrdinal("email")),
+                        phone = reader.GetString(reader.GetOrdinal("phone")),
+                        role = reader.GetString(reader.GetOrdinal("role")),
+                        is_active = reader.GetBoolean(reader.GetOrdinal("is_active"))
+                    });
+                }
+                return employees;
+
+                
+
+                
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Couldn't retrieve any available emp: ", ex);
+                return null;
+            }
+            
+
+        }
     }
 }

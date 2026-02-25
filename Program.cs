@@ -6,6 +6,7 @@ using MomsAppApi.Services.AssignmentService;
 using MomsAppApi.Services.AuthService;
 using MomsAppApi.Services.EmployeeService;
 using MomsAppApi.Services.StructureService;
+using MomsAppApi.Services.WorkLogService;
 using Scalar.AspNetCore;
 using System.Text;
 
@@ -49,6 +50,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IStructureService, StructureService>();
 builder.Services.AddScoped<IAssignmentService, AssignmentService>();
+builder.Services.AddScoped<IWorkLogService,  WorkLogService>();
 
 var app = builder.Build();
 

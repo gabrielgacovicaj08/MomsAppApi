@@ -1,8 +1,8 @@
 [
   {
     "ContainingType": "MomsAppApi.Controller.AssignmentController",
-    "Method": "GetAssignementsByEmpId",
-    "RelativePath": "api/Assignment/assignements-by-emp-id/{employee_id}",
+    "Method": "GetAssignmentByEmpId",
+    "RelativePath": "api/Assignment/assignment-by-empId/{employee_id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -27,7 +27,7 @@
   },
   {
     "ContainingType": "MomsAppApi.Controller.AssignmentController",
-    "Method": "GetAllAssignmentsByDay",
+    "Method": "GetAllAssignmentByDay",
     "RelativePath": "api/Assignment/assignments-by-day/{date}",
     "HttpMethod": "GET",
     "IsController": true,
@@ -41,7 +41,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[MomsAppApi.Models.AssignmentDTO.ResponseAssignmentDTO, MomsAppApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "MomsAppApi.Models.AssignmentDTO.ResponseAssignmentDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -54,7 +54,7 @@
   {
     "ContainingType": "MomsAppApi.Controller.AssignmentController",
     "Method": "CreateAssignmentAsync",
-    "RelativePath": "api/Assignment/create-assignment",
+    "RelativePath": "api/Assignment/create-assignemnt",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -147,6 +147,32 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[MomsAppApi.Models.EmployeeDTO.EmployeeResponseDTO, MomsAppApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MomsAppApi.Controller.EmployeeController",
+    "Method": "GetAvailableEmployeesPerDay",
+    "RelativePath": "api/Employee/available-employee-per-day/{date}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "date",
+        "Type": "System.DateOnly",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": [
       {
         "Type": "System.Collections.Generic.List\u00601[[MomsAppApi.Models.EmployeeDTO.EmployeeResponseDTO, MomsAppApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
@@ -372,6 +398,32 @@
       {
         "Name": "request",
         "Type": "MomsAppApi.Models.StructuresDTO.UpdateStructureDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MomsAppApi.Controller.WorkLogController",
+    "Method": "CreateWorkLog",
+    "RelativePath": "api/WorkLog/create-worklog",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "MomsAppApi.Models.WorkLogDTO.WorkLogRequestDTO",
         "IsRequired": true
       }
     ],

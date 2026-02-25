@@ -74,5 +74,14 @@ namespace MomsAppApi.Controller
             }
             return Ok("Employee deactivated successfully.");
         }
+
+        [HttpGet("available-employee-per-day/{date}")]
+        public async Task<ActionResult<List<EmployeeResponseDTO?>?>> GetAvailableEmployeesPerDay(DateOnly date)
+        {
+            var employees = await employeeService.GetAvailableWorkersPerDay(date);
+            return employees;
+
+
+        }
     }
 }

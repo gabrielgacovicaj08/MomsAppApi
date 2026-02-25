@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MomsAppApi.Models.AssignmentDTO;
 using MomsAppApi.Services.AssignmentService;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MomsAppApi.Controller
 {
@@ -10,32 +9,32 @@ namespace MomsAppApi.Controller
     [ApiController]
     public class AssignmentController(IAssignmentService assignmentService) : ControllerBase
     {
-        [HttpPost("create-assignment")]
+        [HttpPost("create-assignemnt")]
         public async Task<ActionResult<CreateAssignmentDTO?>> CreateAssignmentAsync(CreateAssignmentDTO request)
         {
             var response = await assignmentService.CreateAssignmentAsync(request);
-            if (response == null) return BadRequest(response);
+            if(response == null) return BadRequest("Couldn't create the Assignment.");
             return Ok(response);
         }
 
         [HttpGet("assignments-by-day/{date}")]
-        public async Task<ActionResult<List<ResponseAssignmentDTO?>>> GetAllAssignmentsByDay(DateOnly date)
+        public async Task<ActionResult<ResponseAssignmentDTO?>> GetAllAssignmentByDay(DateOnly date)
         {
-            var response = await assignmentService.GetAllAssignmentsByDay(date);
-            if (response != null) return response;
-
-            return BadRequest(response);
+            var response = new List<ResponseAssignmentDTO>();
+            response = await assignmentService.GetAllAssignmentsByDay(date);
+            if (response.Count == 0) return Ok("No Assignment for today");
+            else if (response == null) return BadRequest("Couldn't fetch Assignments");
+            return Ok(response);
         }
 
-        [HttpGet("assignements-by-emp-id/{employee_id}")]
-        public async Task<ActionResult<List<ResponseAssignmentDTO?>>> GetAssignementsByEmpId(int employee_id)
+        [HttpGet("assignment-by-empId/{employee_id}")]
+        public async Task<ActionResult<List<ResponseAssignmentDTO>?>> GetAssignmentByEmpId(int employee_id)
         {
-            var response = await assignmentService.GetAssignementsByEmpId(employee_id);
-            if (response != null) return response;
-
-            return BadRequest(response);
+            var response = new List<ResponseAssignmentDTO>();
+            response = await assignmentService.GetAssignementsByEmpId(employee_id);
+            if (response.Count == 0) return Ok("No Assignments found for today");
+            else if (response == null) return BadRequest("Couldn't fetch the assignments");
+            return Ok(response);
         }
     }
-
-
 }

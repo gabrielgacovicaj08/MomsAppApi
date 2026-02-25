@@ -14,5 +14,7 @@ namespace MomsAppApi.Services.EmployeeService
 
         Task<bool> DeactivateEmployeeAsync(int employee_id);
 
+        Task<List<EmployeeResponseDTO>> GetAvailableWorkersPerDay(DateOnly date);
+
     }
 }

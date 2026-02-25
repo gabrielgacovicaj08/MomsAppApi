@@ -87,6 +87,7 @@ namespace MomsAppApi.Services.AuthService
         {
             var claims = new List<Claim>
             {
+                new Claim("employee_id", user.employee_id.ToString()),
                 new Claim(ClaimTypes.Email, user.email),
                 new Claim(ClaimTypes.Role, user.role)
             };
