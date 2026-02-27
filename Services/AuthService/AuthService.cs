@@ -77,7 +77,7 @@ namespace MomsAppApi.Services.AuthService
         {
             var refreshToken = GenerateRefreshToken();
             user.refresh_token = refreshToken;
-            user.refresh_token_expiry_time = DateTime.Now.AddDays(7);
+            user.refresh_token_expiry_time = DateTime.UtcNow.AddDays(7);
             context.UserAccounts.Update(user);
             await context.SaveChangesAsync();
             return refreshToken;
@@ -101,7 +101,7 @@ namespace MomsAppApi.Services.AuthService
                 issuer: configuration.GetValue<string>("AppSettings:Issuer"),
                 audience: configuration.GetValue<string>("AppSettings:Audience"),
                 claims: claims,
-                expires: DateTime.Now.AddDays(1),
+                expires: DateTime.UtcNow.AddDays(1),
                 signingCredentials: creds
 
                 );

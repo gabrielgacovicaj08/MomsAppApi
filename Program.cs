@@ -21,6 +21,12 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<MomsAppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MomsAppDb")));
 
+var jwtToken = builder.Configuration["AppSettings:Token"];
+if (string.IsNullOrWhiteSpace(jwtToken))
+{
+    throw new InvalidOperationException("Missing AppSettings:Token configuration.");
+}
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -33,7 +39,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Token"]!))
+                Encoding.UTF8.GetBytes(jwtToken))
         };
     });
 
@@ -66,6 +72,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
