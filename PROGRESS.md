@@ -28,9 +28,19 @@ Security/Auth hardening (PR 1 prep)
 - Normalized token timestamps to UTC in `AuthService`
 - Updated README with `dotnet user-secrets` setup instructions
 
+## Completed in this pass
+- Added `[Authorize]` at controller level for Assignment, Employee, Structure, and WorkLog controllers
+- Restricted mutation endpoints to admin where appropriate (`create/update/delete/deactivate`)
+- Added backward-compatible RESTful routes in parallel:
+  - `PUT employee/{employee_id}` alongside existing update route
+  - `PATCH employee/{employee_id}/deactivate` alongside existing GET route
+  - `PUT structure/{id}` alongside existing update route
+  - `DELETE structure/{id}` alongside existing GET delete route
+- Restricted worklog creation to authenticated `ADMIN` or `WORKER`
+
 ## Next
-1. Review endpoint authorization coverage (controllers)
-2. Propose HTTP verb cleanup for mutation endpoints
+1. Validate endpoint behavior against frontend flows
+2. Add policy for "worker can only fetch own assignments" (optional hardening)
 3. Provide PR-ready commit grouping
 
 ## Blockers

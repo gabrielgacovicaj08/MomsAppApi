@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MomsAppApi.Models.StructuresDTO;
 using MomsAppApi.Services.StructureService;
@@ -7,8 +8,10 @@ namespace MomsAppApi.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class StructureController(IStructureService structureService) : ControllerBase
     {
+        [Authorize(Roles = "ADMIN")]
         [HttpPost("create-structure")]
         public async Task<ActionResult<CreateStructureDTO?>> CreateStructureAsync(CreateStructureDTO request)
         {
@@ -18,7 +21,9 @@ namespace MomsAppApi.Controller
             return Ok(resposne);
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpPost("update-structure/{id}")]
+        [HttpPut("structure/{id}")]
         public async Task<ActionResult<bool>> UpdateStructure(int id, UpdateStructureDTO request)
         {
             var response = await structureService.UpdateStructureAsync(id, request);
@@ -43,7 +48,9 @@ namespace MomsAppApi.Controller
             return NotFound(response);
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpGet("delete-structure/{id}")]
+        [HttpDelete("structure/{id}")]
         public async Task<ActionResult<bool>> DeleteStructureAsync(int id)
         {
             var response = await structureService.DeleteStructureAsync(id);

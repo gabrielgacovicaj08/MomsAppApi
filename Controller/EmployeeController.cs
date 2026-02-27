@@ -14,11 +14,12 @@ namespace MomsAppApi.Controller
 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class EmployeeController(IEmployeeService employeeService) : ControllerBase
     {
 
 
-        //[Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = "ADMIN")]
         [HttpPost("create-employee")]
         public async Task<ActionResult<EmployeeResponseDTO?>> CreateEmployee(CreateEmployeeDTO request)
         {
@@ -46,7 +47,9 @@ namespace MomsAppApi.Controller
 
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpPost("update-employee/{employee_id}")]
+        [HttpPut("employee/{employee_id}")]
         public async Task<ActionResult<Employee?>> UpdateEmployee(int employee_id, Employee updatedEmployee)
         {
             var employee = await employeeService.UpdateEmployeeAsync(employee_id, updatedEmployee);
@@ -57,6 +60,7 @@ namespace MomsAppApi.Controller
             return Ok(employee);
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpGet("all-employees")]
         public async Task<ActionResult<List<EmployeeResponseDTO>>> GetAllEmployees()
         {
@@ -64,7 +68,9 @@ namespace MomsAppApi.Controller
             return Ok(employees);
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpGet("employee/{employee_id}/deactivate")]
+        [HttpPatch("employee/{employee_id}/deactivate")]
         public async Task<ActionResult> DeactivateEmployee(int employee_id)
         {
             var success = await employeeService.DeactivateEmployeeAsync(employee_id);
@@ -75,6 +81,7 @@ namespace MomsAppApi.Controller
             return Ok("Employee deactivated successfully.");
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpGet("available-employee-per-day/{date}")]
         public async Task<ActionResult<List<EmployeeResponseDTO?>?>> GetAvailableEmployeesPerDay(DateOnly date)
         {

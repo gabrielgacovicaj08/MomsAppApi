@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MomsAppApi.Models.AssignmentDTO;
 using MomsAppApi.Services.AssignmentService;
@@ -7,8 +8,10 @@ namespace MomsAppApi.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AssignmentController(IAssignmentService assignmentService) : ControllerBase
     {
+        [Authorize(Roles = "ADMIN")]
         [HttpPost("create-assignemnt")]
         public async Task<ActionResult<CreateAssignmentDTO?>> CreateAssignmentAsync(CreateAssignmentDTO request)
         {
