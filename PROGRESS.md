@@ -38,9 +38,15 @@ Security/Auth hardening (PR 1 prep)
   - `DELETE structure/{id}` alongside existing GET delete route
 - Restricted worklog creation to authenticated `ADMIN` or `WORKER`
 
+## Completed in this pass
+- Hardened `AssignmentController` read authorization:
+  - `GET assignments-by-day/{date}` is now `ADMIN` only (prevents org-wide schedule leakage to workers)
+  - `GET assignment-by-empId/{employee_id}` now allows `ADMIN,WORKER`, but enforces that `WORKER` can only request their own `employee_id` from JWT claim
+- Fixed null-check ordering in assignment read endpoints to avoid null dereference before validation
+
 ## Next
 1. Validate endpoint behavior against frontend flows
-2. Add policy for "worker can only fetch own assignments" (optional hardening)
+2. Add consistent claim-based self-access checks to any other employee-scoped endpoints
 3. Provide PR-ready commit grouping
 
 ## Blockers
