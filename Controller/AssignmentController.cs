@@ -22,6 +22,20 @@ namespace MomsAppApi.Controller
         }
 
         [Authorize(Roles = "ADMIN")]
+        [HttpPut("assignment/{assignment_id}")]
+        [HttpPost("update-assignment/{assignment_id}")]
+        public async Task<ActionResult> UpdateAssignmentAsync(int assignment_id, UpdateAssignmentDTO request)
+        {
+            var updated = await assignmentService.UpdateAssignmentAsync(assignment_id, request);
+            if (!updated)
+            {
+                return NotFound("Assignment not found or update rejected.");
+            }
+
+            return Ok("Assignment updated successfully.");
+        }
+
+        [Authorize(Roles = "ADMIN")]
         [HttpGet("assignments-by-day/{date}")]
         public async Task<ActionResult<ResponseAssignmentDTO?>> GetAllAssignmentByDay(DateOnly date)
         {

@@ -49,7 +49,7 @@ namespace MomsAppApi.Controller
         }
 
         [Authorize(Roles = "ADMIN")]
-        [HttpGet("delete-structure/{id}")]
+        [HttpDelete("delete-structure/{id}")]
         [HttpDelete("structure/{id}")]
         public async Task<ActionResult<bool>> DeleteStructureAsync(int id)
         {

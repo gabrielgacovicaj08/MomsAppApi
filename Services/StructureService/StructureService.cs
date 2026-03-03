@@ -1,18 +1,29 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Caching.Memory;
 using MomsAppApi.Models.StructuresDTO;
 using System.Data;
+using System.Threading;
 
 namespace MomsAppApi.Services.StructureService
 {
-    public class StructureService(IConfiguration configuration) : IStructureService
+    public class StructureService(IConfiguration configuration, IMemoryCache cache) : IStructureService
     {
+        private static int _cacheVersion;
+        private static readonly TimeSpan StructureCacheTtl = TimeSpan.FromMinutes(5);
+
+        private static string AllStructuresCacheKey => $"structures:all:v{Volatile.Read(ref _cacheVersion)}";
+        private static string StructureByIdCacheKey(int structureId) => $"structures:id:{structureId}:v{Volatile.Read(ref _cacheVersion)}";
+
+        private static void BumpCacheVersion() => Interlocked.Increment(ref _cacheVersion);
+
         private SqlConnection NewConn() => new SqlConnection(configuration.GetConnectionString("MomsAppDb"));
+
         public async Task<CreateStructureDTO?> CreateStructureAsync(CreateStructureDTO request)
         {
             await using var conn = NewConn();
             await using var cmd = new SqlCommand("dbo.CreateStructure", conn)
             {
-                CommandType = System.Data.CommandType.StoredProcedure
+                CommandType = CommandType.StoredProcedure
             };
 
             try
@@ -24,8 +35,9 @@ namespace MomsAppApi.Services.StructureService
                 cmd.Parameters.Add("@client_name", SqlDbType.NVarChar, 150).Value = request.client_name;
 
                 await conn.OpenAsync();
-                cmd.ExecuteNonQuery();
+                await cmd.ExecuteNonQueryAsync();
 
+                BumpCacheVersion();
                 return request;
             }
             catch (Exception ex)
@@ -37,8 +49,8 @@ namespace MomsAppApi.Services.StructureService
 
         public async Task<bool> UpdateStructureAsync(int structure_id, UpdateStructureDTO request)
         {
-            using var conn = NewConn();
-            using var cmd = new SqlCommand("dbo.UpdateStructure", conn)
+            await using var conn = NewConn();
+            await using var cmd = new SqlCommand("dbo.UpdateStructure", conn)
             {
                 CommandType = CommandType.StoredProcedure
             };
@@ -54,8 +66,9 @@ namespace MomsAppApi.Services.StructureService
                 cmd.Parameters.Add("@is_active", SqlDbType.Bit).Value = request.is_active;
 
                 await conn.OpenAsync();
-                cmd.ExecuteNonQuery();
+                await cmd.ExecuteNonQueryAsync();
 
+                BumpCacheVersion();
                 return true;
             }
             catch (Exception ex)
@@ -67,11 +80,16 @@ namespace MomsAppApi.Services.StructureService
 
         public async Task<List<StructureResponseDTO?>> GetAllStructuresAsync()
         {
+            var cacheKey = AllStructuresCacheKey;
+            if (cache.TryGetValue(cacheKey, out List<StructureResponseDTO?>? cachedStructures) && cachedStructures is not null)
+            {
+                return cachedStructures;
+            }
+
             var structures = new List<StructureResponseDTO>();
 
-            using var conn = NewConn();
-            using var cmd = new SqlCommand("dbo.GetAllStructures", conn)
-
+            await using var conn = NewConn();
+            await using var cmd = new SqlCommand("dbo.GetAllStructures", conn)
             {
                 CommandType = CommandType.StoredProcedure
             };
@@ -81,7 +99,7 @@ namespace MomsAppApi.Services.StructureService
                 await conn.OpenAsync();
                 await using var reader = await cmd.ExecuteReaderAsync();
 
-                while (reader.Read())
+                while (await reader.ReadAsync())
                 {
                     structures.Add(new StructureResponseDTO
                     {
@@ -94,6 +112,13 @@ namespace MomsAppApi.Services.StructureService
                         is_active = Convert.ToBoolean(reader["is_active"])
                     });
                 }
+
+                cache.Set(cacheKey, structures, StructureCacheTtl);
+                foreach (var structure in structures)
+                {
+                    cache.Set(StructureByIdCacheKey(structure.structure_id), structure, StructureCacheTtl);
+                }
+
                 return structures;
             }
             catch (Exception ex)
@@ -101,13 +126,18 @@ namespace MomsAppApi.Services.StructureService
                 Logger.LogError("Couldn't retrieve the structures: ", ex);
                 return null;
             }
-             
         }
 
         public async Task<StructureResponseDTO?> GetStructureByIdAsync(int structure_id)
         {
-            using var conn = NewConn();
-            using var cmd = new SqlCommand("dbo.GetStructureById", conn)
+            var cacheKey = StructureByIdCacheKey(structure_id);
+            if (cache.TryGetValue(cacheKey, out StructureResponseDTO? cachedStructure))
+            {
+                return cachedStructure;
+            }
+
+            await using var conn = NewConn();
+            await using var cmd = new SqlCommand("dbo.GetStructureById", conn)
             {
                 CommandType = CommandType.StoredProcedure
             };
@@ -116,11 +146,13 @@ namespace MomsAppApi.Services.StructureService
             {
                 cmd.Parameters.Add("@structure_id", SqlDbType.Int).Value = structure_id;
                 await conn.OpenAsync();
-                using var reader = await cmd.ExecuteReaderAsync();
-                if (reader.Read())
+                await using var reader = await cmd.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
                 {
-                    return new StructureResponseDTO
+                    var structure = new StructureResponseDTO
                     {
+                        structure_id = structure_id,
                         name = reader["name"].ToString(),
                         address_line = reader["address_line"].ToString(),
                         city = reader["city"].ToString(),
@@ -128,24 +160,24 @@ namespace MomsAppApi.Services.StructureService
                         client_name = reader["client_name"].ToString(),
                         is_active = Convert.ToBoolean(reader["is_active"])
                     };
+
+                    cache.Set(cacheKey, structure, StructureCacheTtl);
+                    return structure;
                 }
-                else
-                {
-                    return null;
-                }
+
+                return null;
             }
             catch (Exception ex)
             {
                 Logger.LogError("Couldn't retrieve the structure: ", ex);
                 return null;
             }
-
         }
 
         public async Task<bool> DeleteStructureAsync(int structure_id)
         {
-            using var conn = NewConn();
-            using var cmd = new SqlCommand("dbo.DeleteStructure", conn)
+            await using var conn = NewConn();
+            await using var cmd = new SqlCommand("dbo.DeleteStructure", conn)
             {
                 CommandType = CommandType.StoredProcedure
             };
@@ -155,7 +187,9 @@ namespace MomsAppApi.Services.StructureService
                 cmd.Parameters.Add("@structure_id", SqlDbType.Int).Value = structure_id;
 
                 await conn.OpenAsync();
-                cmd.ExecuteNonQuery();
+                await cmd.ExecuteNonQueryAsync();
+
+                BumpCacheVersion();
                 return true;
             }
             catch (Exception ex)

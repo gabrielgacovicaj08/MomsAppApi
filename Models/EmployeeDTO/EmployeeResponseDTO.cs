@@ -9,5 +9,8 @@
         public string email { get; set; } = string.Empty;
         public string role { get; set; } = string.Empty;
         public bool is_active { get; set; } = true;
+
+        // Only populated immediately after account creation.
+        public string? temporary_password { get; set; }
     }
 }

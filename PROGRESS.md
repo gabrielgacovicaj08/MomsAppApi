@@ -44,6 +44,12 @@ Security/Auth hardening (PR 1 prep)
   - `GET assignment-by-empId/{employee_id}` now allows `ADMIN,WORKER`, but enforces that `WORKER` can only request their own `employee_id` from JWT claim
 - Fixed null-check ordering in assignment read endpoints to avoid null dereference before validation
 
+## Completed in this pass
+- Fixed sensitive temporary password leakage via in-memory cache in `EmployeeService`.
+  - New helper `WithoutTemporaryPassword(...)` strips `temporary_password` before caching.
+  - `CreateEmployeeAsync` now caches a sanitized employee object while still returning the one-time temporary password in the create response.
+- Business/security impact: prevents accidental replay of temporary credentials through subsequent `GET employee/{id}` requests served from cache.
+
 ## Next
 1. Validate endpoint behavior against frontend flows
 2. Add consistent claim-based self-access checks to any other employee-scoped endpoints

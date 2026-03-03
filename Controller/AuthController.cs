@@ -1,16 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using MomsAppApi.Entities;
+using Microsoft.AspNetCore.RateLimiting;
 using MomsAppApi.Models.LoginDTO;
 using MomsAppApi.Services.AuthService;
-using System.Globalization;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MomsAppApi.Controller
 {
@@ -18,29 +10,55 @@ namespace MomsAppApi.Controller
     [ApiController]
     public class AuthController(IAuthService authService) : ControllerBase
     {
-        
-        
-
+        [EnableRateLimiting("AuthPolicy")]
         [HttpPost("login")]
         public async Task<ActionResult<TokenResponseDTO>> Login(LoginRequestDTO request)
         {
             var result = await authService.LoginAsync(request);
-            if(result == null)
-            {
-                return BadRequest("Invalid username or password.");
-            }
-            return Ok(result);
 
+            if (result.IsLockedOut)
+            {
+                if (result.RetryAfterSeconds.HasValue)
+                {
+                    Response.Headers.RetryAfter = result.RetryAfterSeconds.Value.ToString();
+                }
+
+                return StatusCode(StatusCodes.Status429TooManyRequests, new ProblemDetails
+                {
+                    Title = "Account temporarily locked",
+                    Detail = "Too many failed login attempts. Please try again later.",
+                    Status = StatusCodes.Status429TooManyRequests
+                });
+            }
+
+            if (result.Tokens == null)
+            {
+                return Unauthorized(new ProblemDetails
+                {
+                    Title = "Authentication failed",
+                    Detail = "Invalid email or password.",
+                    Status = StatusCodes.Status401Unauthorized
+                });
+            }
+
+            return Ok(result.Tokens);
         }
 
+        [EnableRateLimiting("AuthPolicy")]
         [HttpPost("refresh-token")]
         public async Task<ActionResult<TokenResponseDTO>> RefreshToken(RefreshTokenRequestDTO request)
         {
             var result = await authService.RefreshTokensAsync(request);
-            if(result == null)
+            if (result == null)
             {
-                return BadRequest("Invalid refresh token.");
+                return Unauthorized(new ProblemDetails
+                {
+                    Title = "Refresh token invalid",
+                    Detail = "Refresh token is invalid or expired.",
+                    Status = StatusCodes.Status401Unauthorized
+                });
             }
+
             return Ok(result);
         }
 
@@ -50,7 +68,5 @@ namespace MomsAppApi.Controller
         {
             return Ok("You are an ADMIN");
         }
-
-        
     }
 }
