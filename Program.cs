@@ -37,11 +37,30 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+var allowedOrigins = new[]
+{
+    "https://employeemanagmentappgaco.netlify.app",
+    "http://localhost:5173", // if you use Vite locally
+    "http://localhost:3000"  // if you use CRA locally
+};
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("NetlifyPolicy", policy =>
+    {
+        policy
+            .WithOrigins(allowedOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials(); // only if you use cookies/auth credentials
+    });
+});
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         policy => policy
-            .WithOrigins("http://localhost:5173")
+            .WithOrigins(allowedOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
@@ -55,6 +74,7 @@ builder.Services.AddScoped<IWorkLogService,  WorkLogService>();
 var app = builder.Build();
 
 app.UseCors("AllowFrontend");
+app.UseCors("NetlifyPolicy");
 
 
 // Configure the HTTP request pipeline.
