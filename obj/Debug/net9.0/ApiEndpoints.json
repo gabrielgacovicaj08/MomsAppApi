@@ -27,6 +27,27 @@
   },
   {
     "ContainingType": "MomsAppApi.Controller.AssignmentController",
+    "Method": "UpdateAssignmentAsync",
+    "RelativePath": "api/Assignment/assignment/{assignment_id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "assignment_id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "MomsAppApi.Models.AssignmentDTO.UpdateAssignmentDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "MomsAppApi.Controller.AssignmentController",
     "Method": "GetAllAssignmentByDay",
     "RelativePath": "api/Assignment/assignments-by-day/{date}",
     "HttpMethod": "GET",
@@ -76,6 +97,27 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "MomsAppApi.Controller.AssignmentController",
+    "Method": "UpdateAssignmentAsync",
+    "RelativePath": "api/Assignment/update-assignment/{assignment_id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "assignment_id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "MomsAppApi.Models.AssignmentDTO.UpdateAssignmentDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "MomsAppApi.Controller.AuthController",
@@ -239,9 +281,40 @@
   },
   {
     "ContainingType": "MomsAppApi.Controller.EmployeeController",
+    "Method": "UpdateEmployee",
+    "RelativePath": "api/Employee/employee/{employee_id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "employee_id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "updatedEmployee",
+        "Type": "MomsAppApi.Models.EmployeeDTO.UpdateEmployeeRequestDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "MomsAppApi.Models.EmployeeDTO.EmployeeResponseDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MomsAppApi.Controller.EmployeeController",
     "Method": "DeactivateEmployee",
     "RelativePath": "api/Employee/employee/{employee_id}/deactivate",
-    "HttpMethod": "GET",
+    "HttpMethod": "PATCH",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -268,13 +341,13 @@
       },
       {
         "Name": "updatedEmployee",
-        "Type": "MomsAppApi.Entities.Employee",
+        "Type": "MomsAppApi.Models.EmployeeDTO.UpdateEmployeeRequestDTO",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "MomsAppApi.Entities.Employee",
+        "Type": "MomsAppApi.Models.EmployeeDTO.EmployeeResponseDTO",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -334,13 +407,44 @@
     "ContainingType": "MomsAppApi.Controller.StructureController",
     "Method": "DeleteStructureAsync",
     "RelativePath": "api/Structure/delete-structure/{id}",
-    "HttpMethod": "GET",
+    "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "id",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Boolean",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MomsAppApi.Controller.StructureController",
+    "Method": "UpdateStructure",
+    "RelativePath": "api/Structure/structure/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "MomsAppApi.Models.StructuresDTO.UpdateStructureDTO",
         "IsRequired": true
       }
     ],
@@ -373,6 +477,32 @@
     "ReturnTypes": [
       {
         "Type": "MomsAppApi.Models.StructuresDTO.StructureResponseDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "MomsAppApi.Controller.StructureController",
+    "Method": "DeleteStructureAsync",
+    "RelativePath": "api/Structure/structure/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Boolean",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -435,6 +565,38 @@
           "application/json",
           "text/json"
         ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Program\u002B\u003C\u003Ec",
+    "Method": "\u003C\u003CMain\u003E$\u003Eb__0_11",
+    "RelativePath": "health/live",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "Program\u002B\u003C\u003Ec",
+    "Method": "\u003C\u003CMain\u003E$\u003Eb__0_12",
+    "RelativePath": "health/ready",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
         "StatusCode": 200
       }
     ]

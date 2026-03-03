@@ -10,6 +10,7 @@ using MomsAppApi.Services.EmployeeService;
 using MomsAppApi.Services.StructureService;
 using MomsAppApi.Services.WorkLogService;
 using Scalar.AspNetCore;
+using System.IO;
 using System.Text;
 using System.Threading.RateLimiting;
 
@@ -242,27 +243,38 @@ app.UseStatusCodePages(async statusCodeContext =>
 
 app.UseCors("AllowFrontend");
 
-app.Use(async (context, next) =>
-{
-    context.Response.OnStarting(() =>
-    {
-        var headers = context.Response.Headers;
-        headers.TryAdd("X-Content-Type-Options", "nosniff");
-        headers.TryAdd("X-Frame-Options", "DENY");
-        headers.TryAdd("Referrer-Policy", "no-referrer");
-        headers.TryAdd("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
-        headers.TryAdd("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'; base-uri 'none';");
+//app.Use(async (context, next) =>
+//{
+//    await next();
 
-        return Task.CompletedTask;
-    });
+//    var path = context.Request.Path;
 
-    await next();
-});
+//    // Skip CSP/security headers for docs UIs (dev tooling)
+//    if (path.StartsWithSegments("/scalar") || path.StartsWithSegments("/openapi"))
+//        return;
+
+   
+
+//        var headers = context.Response.Headers;
+//        headers.TryAdd("X-Content-Type-Options", "nosniff");
+//        headers.TryAdd("X-Frame-Options", "DENY");
+//        headers.TryAdd("Referrer-Policy", "no-referrer");
+//        headers.TryAdd("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+//        headers.TryAdd("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'; base-uri 'none';");
+
+
+//});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapScalarApiReference();
+    app.MapScalarApiReference(options =>
+    {
+        // Make Scalar look for your OpenAPI exactly where it is:
+        options.WithOpenApiRoutePattern("/openapi/v1.json");
+        // Optional: prettier label
+        options.WithTitle("MomsApp API");
+    }); ;
     app.MapOpenApi();
 }
 

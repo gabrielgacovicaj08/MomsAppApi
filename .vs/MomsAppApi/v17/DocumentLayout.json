@@ -3,12 +3,36 @@
   "WorkspaceRootPath": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|c:\\users\\gabri\\desktop\\momsapp\\momsappapi\\controller\\worklogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|solutionrelative:controller\\worklogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|c:\\users\\gabri\\desktop\\momsapp\\momsappapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|c:\\users\\gabri\\desktop\\momsapp\\momsappapi\\momsappapi.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
+      "RelativeMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|solutionrelative:momsappapi.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|c:\\users\\gabri\\desktop\\momsapp\\momsappapi\\momsappapi.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|solutionrelative:momsappapi.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|c:\\users\\gabri\\desktop\\momsapp\\momsappapi\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|solutionrelative:appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|c:\\users\\gabri\\desktop\\momsapp\\momsappapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|c:\\users\\gabri\\desktop\\momsapp\\momsappapi\\services\\worklogservice\\worklogservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|solutionrelative:services\\worklogservice\\worklogservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|c:\\users\\gabri\\desktop\\momsapp\\momsappapi\\controller\\worklogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|solutionrelative:controller\\worklogcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|c:\\users\\gabri\\desktop\\momsapp\\momsappapi\\controller\\assignmentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|solutionrelative:controller\\assignmentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|c:\\users\\gabri\\desktop\\momsapp\\momsappapi\\models\\worklogdto\\worklogrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -17,14 +41,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|c:\\users\\gabri\\desktop\\momsapp\\momsappapi\\services\\employeeservice\\employeeservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|solutionrelative:services\\employeeservice\\employeeservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|c:\\users\\gabri\\desktop\\momsapp\\momsappapi\\controller\\assignmentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|solutionrelative:controller\\assignmentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|c:\\users\\gabri\\desktop\\momsapp\\momsappapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{CB25C30E-22E3-4A71-AEB8-4A548AD36BD4}|MomsAppApi.csproj|c:\\users\\gabri\\desktop\\momsapp\\momsappapi\\controller\\employeecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -50,24 +66,75 @@
       "DocumentGroups": [
         {
           "DockedWidth": 293,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 11,
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "appsettings.Development.json",
+              "ToolTip": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\appsettings.Development.json",
+              "RelativeToolTip": "appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-03-03T15:01:05.017Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MomsAppApi",
+              "DocumentMoniker": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\MomsAppApi.csproj",
+              "RelativeDocumentMoniker": "MomsAppApi.csproj",
+              "ToolTip": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\MomsAppApi.csproj",
+              "RelativeToolTip": "MomsAppApi.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-03-03T15:00:24.235Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MomsAppApi",
+              "DocumentMoniker": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\MomsAppApi.csproj",
+              "RelativeDocumentMoniker": "MomsAppApi.csproj",
+              "ToolTip": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\MomsAppApi.csproj",
+              "RelativeToolTip": "MomsAppApi.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-03-03T15:00:25.655Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 4,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAABiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-03-03T14:52:12.053Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
               "Title": "AssignmentController.cs",
               "DocumentMoniker": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\Controller\\AssignmentController.cs",
               "RelativeDocumentMoniker": "Controller\\AssignmentController.cs",
               "ToolTip": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\Controller\\AssignmentController.cs",
               "RelativeToolTip": "Controller\\AssignmentController.cs",
-              "ViewState": "AgIAABEAAAAAAAAAAAAIwCUAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACUAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-02-25T19:47:18.651Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 6,
               "Title": "WorkLogController.cs",
               "DocumentMoniker": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\Controller\\WorkLogController.cs",
               "RelativeDocumentMoniker": "Controller\\WorkLogController.cs",
@@ -80,7 +147,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 5,
               "Title": "WorkLogService.cs",
               "DocumentMoniker": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\Services\\WorkLogService\\WorkLogService.cs",
               "RelativeDocumentMoniker": "Services\\WorkLogService\\WorkLogService.cs",
@@ -93,7 +160,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 11,
               "Title": "IWorkLogService.cs",
               "DocumentMoniker": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\Services\\WorkLogService\\IWorkLogService.cs",
               "RelativeDocumentMoniker": "Services\\WorkLogService\\IWorkLogService.cs",
@@ -101,12 +168,11 @@
               "RelativeToolTip": "Services\\WorkLogService\\IWorkLogService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-25T19:19:17.327Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-25T19:19:17.327Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 8,
               "Title": "WorkLogRequestDTO.cs",
               "DocumentMoniker": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\Models\\WorkLogDTO\\WorkLogRequestDTO.cs",
               "RelativeDocumentMoniker": "Models\\WorkLogDTO\\WorkLogRequestDTO.cs",
@@ -114,12 +180,11 @@
               "RelativeToolTip": "Models\\WorkLogDTO\\WorkLogRequestDTO.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-25T19:09:46.33Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-25T19:09:46.33Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 10,
               "Title": "EmployeeController.cs",
               "DocumentMoniker": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\Controller\\EmployeeController.cs",
               "RelativeDocumentMoniker": "Controller\\EmployeeController.cs",
@@ -127,12 +192,11 @@
               "RelativeToolTip": "Controller\\EmployeeController.cs",
               "ViewState": "AgIAADEAAAAAAAAAAAA1wFMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-20T21:26:37.049Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-20T21:26:37.049Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 9,
               "Title": "EmployeeService.cs",
               "DocumentMoniker": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\Services\\EmployeeService\\EmployeeService.cs",
               "RelativeDocumentMoniker": "Services\\EmployeeService\\EmployeeService.cs",
@@ -140,25 +204,24 @@
               "RelativeToolTip": "Services\\EmployeeService\\EmployeeService.cs",
               "ViewState": "AgIAAIgAAAAAAAAAAAAkwAYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-25T17:43:42.665Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-25T17:43:42.665Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 0,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAABwAAAAAAAAAAAAAADQAAAA/AAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\Program.cs*",
+              "RelativeToolTip": "Program.cs*",
+              "ViewState": "AgIAANgAAAAAAAAAAAAkwPgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-02-25T19:19:34.914Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 12,
               "Title": "WorkLogResponseDTO.cs",
               "DocumentMoniker": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\Models\\WorkLogDTO\\WorkLogResponseDTO.cs",
               "RelativeDocumentMoniker": "Models\\WorkLogDTO\\WorkLogResponseDTO.cs",
@@ -166,12 +229,11 @@
               "RelativeToolTip": "Models\\WorkLogDTO\\WorkLogResponseDTO.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAyAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-25T19:13:24.873Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-25T19:13:24.873Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 13,
               "Title": "IEmployeeService.cs",
               "DocumentMoniker": "C:\\Users\\gabri\\Desktop\\MomsApp\\MomsAppApi\\Services\\EmployeeService\\IEmployeeService.cs",
               "RelativeDocumentMoniker": "Services\\EmployeeService\\IEmployeeService.cs",
@@ -179,15 +241,9 @@
               "RelativeToolTip": "Services\\EmployeeService\\IEmployeeService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAABRAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-25T17:42:53.892Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-25T17:42:53.892Z"
             }
           ]
-        },
-        {
-          "DockedWidth": 329,
-          "SelectedChildIndex": -1,
-          "Children": []
         }
       ]
     }
