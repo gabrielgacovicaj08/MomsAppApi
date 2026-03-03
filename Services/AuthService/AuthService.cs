@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using MomsAppApi.Data;
 using MomsAppApi.Entities;
@@ -11,27 +12,51 @@ using System.Text;
 
 namespace MomsAppApi.Services.AuthService
 {
-    public class AuthService(MomsAppDbContext context, IConfiguration configuration) : IAuthService
+    public class AuthService(
+        MomsAppDbContext context,
+        IConfiguration configuration,
+        IMemoryCache memoryCache,
+        ILogger<AuthService> logger) : IAuthService
     {
-        public async Task<TokenResponseDTO?> LoginAsync(LoginRequestDTO request)
+        private const int MaxFailedLoginAttempts = 5;
+        private static readonly TimeSpan LockoutDuration = TimeSpan.FromMinutes(15);
+        private static readonly TimeSpan AttemptWindow = TimeSpan.FromMinutes(15);
+
+        public async Task<LoginAttemptResultDTO> LoginAsync(LoginRequestDTO request)
         {
             if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
-                return null;
+                return LoginAttemptResultDTO.InvalidCredentials();
+
+            var normalizedEmail = request.Email.Trim().ToLowerInvariant();
+
+            if (TryGetLockoutRemaining(normalizedEmail, out var remainingLockout))
+            {
+                logger.LogWarning("Blocked login for locked account {Email}", normalizedEmail);
+                return LoginAttemptResultDTO.LockedOut((int)Math.Ceiling(remainingLockout.TotalSeconds));
+            }
 
             var user = await context.UserAccounts
-                .FirstOrDefaultAsync(u => u.email == request.Email);
+                .FirstOrDefaultAsync(u => u.email == normalizedEmail);
 
             if (user == null)
-                return null;
+            {
+                RecordFailedLogin(normalizedEmail);
+                return LoginAttemptResultDTO.InvalidCredentials();
+            }
 
             var result = new PasswordHasher<UserAccount>()
                 .VerifyHashedPassword(user, user.password_hash, request.Password);
 
             if (result == PasswordVerificationResult.Failed)
-                return null;
+            {
+                RecordFailedLogin(normalizedEmail);
+                return LoginAttemptResultDTO.InvalidCredentials();
+            }
+
+            ClearFailedLoginState(normalizedEmail);
+
             TokenResponseDTO response = await CreateTokenResponse(user);
-            // ✅ return token, not a string message
-            return response;
+            return LoginAttemptResultDTO.Success(response);
         }
 
         private async Task<TokenResponseDTO> CreateTokenResponse(UserAccount user)
@@ -52,14 +77,32 @@ namespace MomsAppApi.Services.AuthService
             return await CreateTokenResponse(user);
         }
 
-
-
         private async Task<UserAccount?> ValidateRefreshTokenAsync(int user_id, string refresh_token)
         {
             var user = await context.UserAccounts.FindAsync(user_id);
-            if(user is null || user.refresh_token != refresh_token || user.refresh_token_expiry_time <= DateTime.UtcNow)
+            if (user is null || !user.refresh_token_expiry_time.HasValue || user.refresh_token_expiry_time <= DateTime.UtcNow)
             {
                 return null;
+            }
+
+            var storedToken = user.refresh_token ?? string.Empty;
+            var incomingTokenHash = HashRefreshToken(refresh_token);
+
+            var matches = IsHashedToken(storedToken)
+                ? FixedTimeEquals(storedToken, incomingTokenHash)
+                : FixedTimeEquals(storedToken, refresh_token);
+
+            if (!matches)
+            {
+                return null;
+            }
+
+            // One-time migration path for legacy plain-text tokens in the DB.
+            if (!IsHashedToken(storedToken))
+            {
+                user.refresh_token = incomingTokenHash;
+                context.UserAccounts.Update(user);
+                await context.SaveChangesAsync();
             }
 
             return user;
@@ -76,11 +119,29 @@ namespace MomsAppApi.Services.AuthService
         private async Task<string> GeenerateAndSaveRefreshTokenAsync(UserAccount user)
         {
             var refreshToken = GenerateRefreshToken();
-            user.refresh_token = refreshToken;
-            user.refresh_token_expiry_time = DateTime.Now.AddDays(7);
+            user.refresh_token = HashRefreshToken(refreshToken);
+            user.refresh_token_expiry_time = DateTime.UtcNow.AddDays(7);
             context.UserAccounts.Update(user);
             await context.SaveChangesAsync();
             return refreshToken;
+        }
+
+        private static string HashRefreshToken(string token)
+        {
+            var hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(token));
+            return Convert.ToHexString(hashBytes);
+        }
+
+        private static bool IsHashedToken(string token)
+        {
+            return token.Length == 64 && token.All(Uri.IsHexDigit);
+        }
+
+        private static bool FixedTimeEquals(string left, string right)
+        {
+            return CryptographicOperations.FixedTimeEquals(
+                Encoding.UTF8.GetBytes(left),
+                Encoding.UTF8.GetBytes(right));
         }
 
         private string CreateToken(UserAccount user)
@@ -92,8 +153,11 @@ namespace MomsAppApi.Services.AuthService
                 new Claim(ClaimTypes.Role, user.role)
             };
 
+            var signingToken = configuration.GetValue<string>("AppSettings:Token")
+                ?? throw new InvalidOperationException("Missing AppSettings:Token configuration.");
+
             var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(configuration.GetValue<string>("AppSettings:Token")));
+                Encoding.UTF8.GetBytes(signingToken));
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
 
@@ -101,7 +165,7 @@ namespace MomsAppApi.Services.AuthService
                 issuer: configuration.GetValue<string>("AppSettings:Issuer"),
                 audience: configuration.GetValue<string>("AppSettings:Audience"),
                 claims: claims,
-                expires: DateTime.Now.AddDays(1),
+                expires: DateTime.UtcNow.AddDays(1),
                 signingCredentials: creds
 
                 );
@@ -109,6 +173,51 @@ namespace MomsAppApi.Services.AuthService
             return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
         }
 
-       
+        private bool TryGetLockoutRemaining(string normalizedEmail, out TimeSpan remaining)
+        {
+            remaining = TimeSpan.Zero;
+
+            if (!memoryCache.TryGetValue(GetLockoutCacheKey(normalizedEmail), out DateTimeOffset lockoutUntil))
+                return false;
+
+            var now = DateTimeOffset.UtcNow;
+            if (lockoutUntil <= now)
+            {
+                memoryCache.Remove(GetLockoutCacheKey(normalizedEmail));
+                return false;
+            }
+
+            remaining = lockoutUntil - now;
+            return true;
+        }
+
+        private void RecordFailedLogin(string normalizedEmail)
+        {
+            var attemptsCacheKey = GetAttemptsCacheKey(normalizedEmail);
+            var failedAttempts = memoryCache.Get<int?>(attemptsCacheKey) ?? 0;
+            failedAttempts++;
+
+            memoryCache.Set(attemptsCacheKey, failedAttempts, AttemptWindow);
+
+            if (failedAttempts >= MaxFailedLoginAttempts)
+            {
+                memoryCache.Set(GetLockoutCacheKey(normalizedEmail), DateTimeOffset.UtcNow.Add(LockoutDuration), LockoutDuration);
+                memoryCache.Remove(attemptsCacheKey);
+
+                logger.LogWarning(
+                    "Account {Email} temporarily locked after {Attempts} failed login attempts",
+                    normalizedEmail,
+                    MaxFailedLoginAttempts);
+            }
+        }
+
+        private void ClearFailedLoginState(string normalizedEmail)
+        {
+            memoryCache.Remove(GetAttemptsCacheKey(normalizedEmail));
+            memoryCache.Remove(GetLockoutCacheKey(normalizedEmail));
+        }
+
+        private static string GetAttemptsCacheKey(string normalizedEmail) => $"auth:failed-attempts:{normalizedEmail}";
+        private static string GetLockoutCacheKey(string normalizedEmail) => $"auth:lockout:{normalizedEmail}";
     }
 }

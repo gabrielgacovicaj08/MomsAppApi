@@ -1,0 +1,25 @@
+# Build outputs
+bin/
+obj/
+
+# IDE / tooling
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Logs
+*.log
+errorlog.txt
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env / local overrides
+.env
+.env.*
+appsettings.Local.json

@@ -1,14 +1,26 @@
-﻿namespace MomsAppApi.Models.EmployeeDTO
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace MomsAppApi.Models.EmployeeDTO
 {
     public class UpdateEmployeeRequestDTO
     {
-        public int employee_id { get; set; }
-        public string? first_name { get; set; } = string.Empty;
+        [MaxLength(100)]
+        public string? first_name { get; set; }
 
-        public string? last_name { get; set; } = string.Empty;
-        public string? phone { get; set; } = string.Empty;
-        public string? email { get; set; } = string.Empty;
-        public string? role { get; set; } = string.Empty;
-        public bool? is_active { get; set; } = true;
+        [MaxLength(100)]
+        public string? last_name { get; set; }
+
+        [Phone]
+        [MaxLength(30)]
+        public string? phone { get; set; }
+
+        [EmailAddress]
+        [MaxLength(256)]
+        public string? email { get; set; }
+
+        [RegularExpression("(?i)^(ADMIN|WORKER)$", ErrorMessage = "Role must be ADMIN or WORKER.")]
+        public string? role { get; set; }
+
+        public bool? is_active { get; set; }
     }
 }

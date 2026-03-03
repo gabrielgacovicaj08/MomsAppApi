@@ -1,21 +1,66 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using MomsAppApi.Data;
 using MomsAppApi.Entities;
 using MomsAppApi.Models.EmployeeDTO;
 using System.Data;
+using System.Security.Cryptography;
 
 namespace MomsAppApi.Services.EmployeeService
 {
-    public class EmployeeService(IConfiguration configuration) : IEmployeeService
+    public class EmployeeService(IConfiguration configuration, IMemoryCache cache) : IEmployeeService
     {
+        private const string PasswordChars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*";
+        private static readonly TimeSpan EmployeeCacheTtl = TimeSpan.FromMinutes(2);
+        private const string AllEmployeesCacheKey = "employees:all";
+
+        private static string EmployeeByIdCacheKey(int employeeId) => $"employees:id:{employeeId}";
 
         private SqlConnection NewConn() => new SqlConnection(configuration.GetConnectionString("MomsAppDb"));
+
+        private void InvalidateEmployeeCache(int? employeeId = null)
+        {
+            cache.Remove(AllEmployeesCacheKey);
+            if (employeeId.HasValue)
+            {
+                cache.Remove(EmployeeByIdCacheKey(employeeId.Value));
+            }
+        }
+
+        private static string NormalizeEmail(string email) => email.Trim().ToLowerInvariant();
+
+        private static string NormalizeRole(string role) => role.Trim().ToUpperInvariant();
+
+        private static EmployeeResponseDTO WithoutTemporaryPassword(EmployeeResponseDTO employee) => new()
+        {
+            employee_id = employee.employee_id,
+            first_name = employee.first_name,
+            last_name = employee.last_name,
+            email = employee.email,
+            phone = employee.phone,
+            role = employee.role,
+            is_active = employee.is_active,
+            temporary_password = null
+        };
+
+        private static string GenerateTemporaryPassword(int length = 14)
+        {
+            var chars = new char[length];
+            for (var i = 0; i < length; i++)
+            {
+                chars[i] = PasswordChars[RandomNumberGenerator.GetInt32(PasswordChars.Length)];
+            }
+
+            return new string(chars);
+        }
 
         public async Task<EmployeeResponseDTO?> CreateEmployeeAsync(CreateEmployeeDTO request)
         {
             int new_employee_id;
+            var normalizedEmail = NormalizeEmail(request.email);
+            var normalizedRole = NormalizeRole(request.role);
 
             await using var conn = NewConn();
             await conn.OpenAsync();
@@ -30,11 +75,11 @@ namespace MomsAppApi.Services.EmployeeService
 
                 await using (var cmd = new SqlCommand("dbo.CreateEmployee", conn, (SqlTransaction)transaction) { CommandType = CommandType.StoredProcedure })
                 {
-                    cmd.Parameters.AddWithValue("@first_name", request.first_name);
-                    cmd.Parameters.AddWithValue("@last_name", request.last_name);
-                    cmd.Parameters.AddWithValue("@phone", request.phone);
-                    cmd.Parameters.AddWithValue("@email", request.email);
-                    cmd.Parameters.AddWithValue("@role", request.role);
+                    cmd.Parameters.AddWithValue("@first_name", request.first_name.Trim());
+                    cmd.Parameters.AddWithValue("@last_name", request.last_name.Trim());
+                    cmd.Parameters.AddWithValue("@phone", request.phone.Trim());
+                    cmd.Parameters.AddWithValue("@email", normalizedEmail);
+                    cmd.Parameters.AddWithValue("@role", normalizedRole);
 
                     object? result = await cmd.ExecuteScalarAsync();
 
@@ -51,17 +96,18 @@ namespace MomsAppApi.Services.EmployeeService
 
 
                 var userAccount = new UserAccount();
+                var temporaryPassword = GenerateTemporaryPassword();
 
                 var hashedPassword = new PasswordHasher<UserAccount>()
-                    .HashPassword(userAccount, request.last_name);
+                    .HashPassword(userAccount, temporaryPassword);
 
 
                 await using (var cmd = new SqlCommand("dbo.CreateUserAccount", conn, (SqlTransaction)transaction) { CommandType = CommandType.StoredProcedure })
                 {
                     cmd.Parameters.AddWithValue("@employee_id", new_employee_id);
-                    cmd.Parameters.AddWithValue("@email", request.email);
+                    cmd.Parameters.AddWithValue("@email", normalizedEmail);
                     cmd.Parameters.AddWithValue("@password_hash", hashedPassword);
-                    cmd.Parameters.AddWithValue("@role", request.role);
+                    cmd.Parameters.AddWithValue("@role", normalizedRole);
                     await cmd.ExecuteNonQueryAsync();
                 }
 
@@ -70,14 +116,18 @@ namespace MomsAppApi.Services.EmployeeService
                 await transaction.CommitAsync();
                 var response = new EmployeeResponseDTO
                 {
-                    first_name = request.first_name,
-                    last_name = request.last_name,
-                    email = request.email,
-                    phone = request.phone,
-                    role = request.role,
-                    is_active = true
+                    employee_id = new_employee_id,
+                    first_name = request.first_name.Trim(),
+                    last_name = request.last_name.Trim(),
+                    email = normalizedEmail,
+                    phone = request.phone.Trim(),
+                    role = normalizedRole,
+                    is_active = true,
+                    temporary_password = temporaryPassword
                 };
 
+                InvalidateEmployeeCache(new_employee_id);
+                cache.Set(EmployeeByIdCacheKey(new_employee_id), WithoutTemporaryPassword(response), EmployeeCacheTtl);
 
                 return response;
             }
@@ -94,6 +144,12 @@ namespace MomsAppApi.Services.EmployeeService
 
         public async Task<EmployeeResponseDTO?> GetEmployeeByIdAsync(int employee_id)
         {
+            var cacheKey = EmployeeByIdCacheKey(employee_id);
+            if (cache.TryGetValue(cacheKey, out EmployeeResponseDTO? cachedEmployee))
+            {
+                return cachedEmployee;
+            }
+
             await using var conn = NewConn();
             await using var cmd = new SqlCommand("dbo.GetEmployeeById", conn)
             {
@@ -108,8 +164,7 @@ namespace MomsAppApi.Services.EmployeeService
                 if (!await reader.ReadAsync())
                     return null;
 
-                // Map the row to your DTO
-                return new EmployeeResponseDTO
+                var employee = new EmployeeResponseDTO
                 {
                     employee_id = employee_id,
                     first_name = reader.GetString(reader.GetOrdinal("first_name")),
@@ -119,6 +174,9 @@ namespace MomsAppApi.Services.EmployeeService
                     role = reader.GetString(reader.GetOrdinal("role")),
                     is_active = reader.GetBoolean(reader.GetOrdinal("is_active"))
                 };
+
+                cache.Set(cacheKey, employee, EmployeeCacheTtl);
+                return employee;
             }
             catch (Exception ex)
             {
@@ -130,7 +188,7 @@ namespace MomsAppApi.Services.EmployeeService
 
         }
 
-        public async Task<Employee?> UpdateEmployeeAsync(int employee_id, Employee updatedEmployee)
+        public async Task<EmployeeResponseDTO?> UpdateEmployeeAsync(int employee_id, UpdateEmployeeRequestDTO updatedEmployee)
         {
 
             await using var conn = NewConn();
@@ -145,20 +203,21 @@ namespace MomsAppApi.Services.EmployeeService
 
             cmd.Parameters.Add("@first_name", SqlDbType.NVarChar, 100).Value = string.IsNullOrWhiteSpace(updatedEmployee.first_name) ? DBNull.Value : updatedEmployee.first_name.Trim();
             cmd.Parameters.Add("@last_name", SqlDbType.NVarChar, 100).Value = string.IsNullOrWhiteSpace(updatedEmployee.last_name) ? DBNull.Value : updatedEmployee.last_name.Trim();
-            cmd.Parameters.Add("@phone", SqlDbType.NVarChar, 100).Value = string.IsNullOrWhiteSpace(updatedEmployee.phone) ? DBNull.Value : updatedEmployee.phone.Trim();
-            cmd.Parameters.Add("@email", SqlDbType.NVarChar, 100).Value = string.IsNullOrWhiteSpace(updatedEmployee.email) ? DBNull.Value : updatedEmployee.email.Trim();
-            cmd.Parameters.Add("@role", SqlDbType.NVarChar, 100).Value = string.IsNullOrWhiteSpace(updatedEmployee.role) ? DBNull.Value : updatedEmployee.role.Trim();
-            cmd.Parameters.Add("@is_active", SqlDbType.NVarChar, 100).Value = (object?)updatedEmployee.is_active ?? DBNull.Value;
+            cmd.Parameters.Add("@phone", SqlDbType.NVarChar, 30).Value = string.IsNullOrWhiteSpace(updatedEmployee.phone) ? DBNull.Value : updatedEmployee.phone.Trim();
+            cmd.Parameters.Add("@email", SqlDbType.NVarChar, 256).Value = string.IsNullOrWhiteSpace(updatedEmployee.email) ? DBNull.Value : NormalizeEmail(updatedEmployee.email);
+            cmd.Parameters.Add("@role", SqlDbType.NVarChar, 100).Value = string.IsNullOrWhiteSpace(updatedEmployee.role) ? DBNull.Value : NormalizeRole(updatedEmployee.role);
+            cmd.Parameters.Add("@is_active", SqlDbType.Bit).Value = (object?)updatedEmployee.is_active ?? DBNull.Value;
 
             try
             {
                 await conn.OpenAsync();
-                
+
                 var rows = Convert.ToInt32(await cmd.ExecuteScalarAsync());
 
                 if (rows == 0) return null;
 
-                return updatedEmployee;
+                InvalidateEmployeeCache(employee_id);
+                return await GetEmployeeByIdAsync(employee_id);
             }
             catch (Exception ex)
             {
@@ -172,13 +231,18 @@ namespace MomsAppApi.Services.EmployeeService
 
         public async Task<List<EmployeeResponseDTO?>> GetAllEmployeesAsync()
         {
+            if (cache.TryGetValue(AllEmployeesCacheKey, out List<EmployeeResponseDTO?>? cachedEmployees) && cachedEmployees is not null)
+            {
+                return cachedEmployees;
+            }
+
             await using var conn = NewConn();
             await using var cmd = new SqlCommand("dbo.GetAllEmployees", conn)
             {
                 CommandType = CommandType.StoredProcedure
             };
 
-            var employees = new List<EmployeeResponseDTO>();
+            var employees = new List<EmployeeResponseDTO?>();
             try
             {
                 await conn.OpenAsync();
@@ -187,7 +251,7 @@ namespace MomsAppApi.Services.EmployeeService
 
                 while (await reader.ReadAsync())
                 {
-                    employees.Add(new EmployeeResponseDTO
+                    var employee = new EmployeeResponseDTO
                     {
                         employee_id = reader.GetInt32(reader.GetOrdinal("employee_id")),
                         first_name = reader.GetString(reader.GetOrdinal("first_name")),
@@ -196,9 +260,13 @@ namespace MomsAppApi.Services.EmployeeService
                         phone = reader.GetString(reader.GetOrdinal("phone")),
                         role = reader.GetString(reader.GetOrdinal("role")),
                         is_active = reader.GetBoolean(reader.GetOrdinal("is_active"))
-                    });
+                    };
+
+                    employees.Add(employee);
+                    cache.Set(EmployeeByIdCacheKey(employee.employee_id), employee, EmployeeCacheTtl);
                 }
 
+                cache.Set(AllEmployeesCacheKey, employees, EmployeeCacheTtl);
                 return employees;
 
             }
@@ -224,9 +292,15 @@ namespace MomsAppApi.Services.EmployeeService
             {
                 await conn.OpenAsync();
 
-               
+                
                 var rows = Convert.ToInt32(await cmd.ExecuteScalarAsync());
-                return rows > 0;
+                var wasDeactivated = rows > 0;
+                if (wasDeactivated)
+                {
+                    InvalidateEmployeeCache(employee_id);
+                }
+
+                return wasDeactivated;
             }
             catch (Exception ex)
             {
@@ -268,16 +342,16 @@ namespace MomsAppApi.Services.EmployeeService
                 }
                 return employees;
 
-                
 
-                
+
+
             }
             catch (Exception ex)
             {
                 Logger.LogError("Couldn't retrieve any available emp: ", ex);
                 return null;
             }
-            
+
 
         }
     }

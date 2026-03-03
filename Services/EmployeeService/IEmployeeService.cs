@@ -9,7 +9,7 @@ namespace MomsAppApi.Services.EmployeeService
         Task<EmployeeResponseDTO> CreateEmployeeAsync(CreateEmployeeDTO employee);
         Task<EmployeeResponseDTO?> GetEmployeeByIdAsync(int employee_id);
 
-        Task<Employee ?> UpdateEmployeeAsync(int employee_id, Employee updatedEmployee);
+        Task<EmployeeResponseDTO?> UpdateEmployeeAsync(int employee_id, UpdateEmployeeRequestDTO updatedEmployee);
         Task<List<EmployeeResponseDTO?>> GetAllEmployeesAsync();
 
         Task<bool> DeactivateEmployeeAsync(int employee_id);
